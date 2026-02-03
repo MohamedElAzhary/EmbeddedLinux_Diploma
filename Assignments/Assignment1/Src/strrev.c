@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 
                 case 'w':
                 {
-                    Util_FillReversedStringTokensArray(optarg);
+                    Util_FillReversedStringTokensArray(optarg, ' ');
                     printf("%s\n",Util_GetReversedBufferAddress());
                     break;
                 }

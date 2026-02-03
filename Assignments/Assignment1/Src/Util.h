@@ -28,4 +28,4 @@ uint8_t Util_ConvertToLowerCase(uint8_t param_char);
 bool Util_FillReversedArray(uint8_t* param_ArrayPtr, uint32_t param_ArraySize);
 bool Util_FillReversedString(uint8_t* param_StringPtr);
 uint8_t* Util_GetReversedBufferAddress(void);
-bool Util_FillReversedStringTokensArray(uint8_t* param_StringPtr);
+bool Util_FillReversedStringTokensArray(uint8_t* param_StringPtr, int8_t param_Seperator);

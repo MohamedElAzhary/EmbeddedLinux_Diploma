@@ -132,7 +132,7 @@ uint8_t* Util_GetReversedBufferAddress(void)
     return global_ReveresedArray;
 }
 
-bool Util_FillReversedStringTokensArray(uint8_t* param_StringPtr)
+bool Util_FillReversedStringTokensArray(uint8_t* param_StringPtr, int8_t param_Seperator)
 {
     uint32_t local_Index = 0u, local_DestIndex = 0u, local_SourceArrayLen = 0u, local_StrLen = 0u;
     uint32_t local_StIndex = 0u, local_EndIndex = 0u;
@@ -149,7 +149,7 @@ bool Util_FillReversedStringTokensArray(uint8_t* param_StringPtr)
 
         while(0 <= local_Index)
         {
-            local_Dec_Ignore_Cond = (param_StringPtr[local_Index] == '\0') || ((param_StringPtr[local_Index] != ' ') && (local_Index != 0u) );
+            local_Dec_Ignore_Cond = (param_StringPtr[local_Index] == '\0') || ((param_StringPtr[local_Index] != param_Seperator) && (local_Index != 0u) );
             if(local_Dec_Ignore_Cond)
             {
                 if(0 < local_Index)
@@ -161,13 +161,13 @@ bool Util_FillReversedStringTokensArray(uint8_t* param_StringPtr)
                     break;
                 }
             }
-            else if( (param_StringPtr[local_Index] == ' ') )
+            else if( (param_StringPtr[local_Index] == param_Seperator) )
             {
                 local_StIndex = local_Index + 1;
                 local_EndIndex = local_StIndex;
-                if( (param_StringPtr[local_StIndex] != ' ') && (param_StringPtr[local_StIndex] != '\0') )
+                if( (param_StringPtr[local_StIndex] != param_Seperator) && (param_StringPtr[local_StIndex] != '\0') )
                 {
-                    while( (param_StringPtr[local_EndIndex] != ' ') && (param_StringPtr[local_EndIndex] != '\0') )
+                    while( (param_StringPtr[local_EndIndex] != param_Seperator) && (param_StringPtr[local_EndIndex] != '\0') )
                     {
                         local_EndIndex++;
                     }
@@ -180,7 +180,7 @@ bool Util_FillReversedStringTokensArray(uint8_t* param_StringPtr)
 
                         if(global_ReveresedArray[(local_DestIndex + local_StrLen - 1u)] == '\0')
                         {
-                            global_ReveresedArray[(local_DestIndex + local_StrLen - 1u)] = ' ';
+                            global_ReveresedArray[(local_DestIndex + local_StrLen - 1u)] = param_Seperator;
                         }
 
                         local_DestIndex = local_DestIndex + local_StrLen;
@@ -200,13 +200,13 @@ bool Util_FillReversedStringTokensArray(uint8_t* param_StringPtr)
                     break;
                 }
             }
-            else if( (param_StringPtr[local_Index] != ' ') && (local_Index == 0u) )
+            else if( (param_StringPtr[local_Index] != param_Seperator) && (local_Index == 0u) )
             {
                 local_StIndex = local_Index;
                 local_EndIndex = local_StIndex;
-                if( (param_StringPtr[local_StIndex] != ' ') && (param_StringPtr[local_StIndex] != '\0') )
+                if( (param_StringPtr[local_StIndex] != param_Seperator) && (param_StringPtr[local_StIndex] != '\0') )
                 {
-                    while( (param_StringPtr[local_EndIndex] != ' ') && (param_StringPtr[local_EndIndex] != '\0') )
+                    while( (param_StringPtr[local_EndIndex] != param_Seperator) && (param_StringPtr[local_EndIndex] != '\0') )
                     {
                         local_EndIndex++;
                     }
@@ -218,7 +218,7 @@ bool Util_FillReversedStringTokensArray(uint8_t* param_StringPtr)
                         memcpy((uint8_t*) &global_ReveresedArray[local_DestIndex], (uint8_t*) &param_StringPtr[local_StIndex], local_StrLen);                
 
                         local_DestIndex = local_DestIndex + local_StrLen;
-                        if(global_ReveresedArray[(local_DestIndex - 1u)] == ' ')
+                        if(global_ReveresedArray[(local_DestIndex - 1u)] == param_Seperator)
                         {
                             global_ReveresedArray[(local_DestIndex - 1u)] = '\0';
                         }
