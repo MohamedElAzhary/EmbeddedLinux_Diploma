@@ -1,6 +1,6 @@
 /***************************************************************
-* File Name     : strrev.c
-* Description   : Source file for strrev that reverses a string
+* File Name     : strcat.c
+* Description   : Source file for concatenating strings
 * Date          : 2.2.2026
 * Author        : Mohamed El Azhary
 * Version       : 1.0
@@ -13,7 +13,6 @@
 #include "getopt.h"
 
 /***************************Macros******************************/
-#define MAX_STRING_SIZE     (255U)
 
 /**************************Typedefs*****************************/
 
@@ -25,10 +24,10 @@ void app_usage(void);
 /******************functions-implementations*********************/
 void app_usage(void)
 {
-    printf("This is strrev application, used for reversing string chars or words order\n"
+    printf("This is strcat application, used for concatenating strings\n"
            "[Usage]\n"
-           "strrev \"string1\"               : Returns string1 chars in reverse order.\n"
-           "strrev -w \"string1 string2\"    : Reverse words order.\n");
+           "strcat \"string1\" \"string2\"       : Concatenate Strings into 1 string.\n"
+           "strcat -s \" \" \"string1\" \"string2\"    : Concatenate Strings into 1 string separated by char.\n");
 }
 
 
@@ -36,22 +35,22 @@ void app_usage(void)
 int main(int argc, char *argv[])
 {
     int32_t opt = 0;
-    uint32_t local_Index = 0u;
-    uint32_t local_StringSize = 0u;
-    
+    uint32_t local_Index = 0u;  
 
     if(argc == 1)
     {
         app_usage();
     }
-    else if (argc == 2)
+    else if (argc == 3)
     {
-        Util_FillReversedString(argv[1]);
-        printf("%s\n",Util_GetReversedBufferAddress());
+        if(true == Util_CatStrings(argv[1], argv[2], false))
+        {
+            printf("%s\n", Util_GetReversedBufferAddress());
+        }
     }
     else
     {
-        while( (opt = getopt(argc, argv, "hw:")) != -1)
+        while( (opt = getopt(argc, argv, "hs:")) != -1)
         {
             switch(opt)
             {
@@ -61,10 +60,14 @@ int main(int argc, char *argv[])
                     break;
                 }
 
-                case 'w':
+                case 's':
                 {
-                    Util_FillReversedStringTokensArray(optarg, ' ');
-                    printf("%s\n",Util_GetReversedBufferAddress());
+                    printf("%s\n", optarg);
+                    printf("%s\n", argv[optind]);
+                    if(true == Util_CatStrings(optarg, argv[optind], true))
+                    {
+                        printf("%s\n", Util_GetReversedBufferAddress());
+                    }
                     break;
                 }
                 

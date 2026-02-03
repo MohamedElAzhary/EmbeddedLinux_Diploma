@@ -262,3 +262,48 @@ bool Util_FillReversedStringTokensArray(uint8_t* param_StringPtr, int8_t param_S
     return local_RetValue;
 }
 
+bool Util_CatStrings(uint8_t* param_Str1, uint8_t* param_Str2, bool param_AddSpaceSeperator)
+{
+    bool local_RetValue = true;
+    uint32_t local_Str1Len = strlen(param_Str1);
+    uint32_t local_Str2Len = strlen(param_Str2);
+    uint32_t local_DestIndex = 0u;
+    uint32_t local_TotalLength = 0u;
+
+    memset(global_ReveresedArray, 0u, UTIL_MAX_BUFFER_SIZE);
+
+    if(local_Str1Len + 1 <= UTIL_MAX_BUFFER_SIZE)
+    {
+        memcpy((uint8_t*) &global_ReveresedArray[local_DestIndex], (uint8_t*) param_Str1, local_Str1Len);  
+        local_DestIndex = local_DestIndex + local_Str1Len;
+
+        local_TotalLength = local_Str1Len;
+
+        if(true == param_AddSpaceSeperator)
+        {
+            local_TotalLength = local_TotalLength + 1u;  
+            if(local_TotalLength <= UTIL_MAX_BUFFER_SIZE )
+            {
+                global_ReveresedArray[local_DestIndex] = ' ';
+                local_DestIndex = local_DestIndex + 1u;           
+            }
+        }
+
+        local_TotalLength = local_TotalLength + local_Str2Len + 1;
+        if(local_TotalLength <= UTIL_MAX_BUFFER_SIZE)
+        {
+            memcpy((uint8_t*) &global_ReveresedArray[local_DestIndex], (uint8_t*) param_Str2, local_Str2Len);                
+        }
+        else
+        {
+            local_RetValue = false;
+        }
+    }
+    else
+    {
+        local_RetValue = false;
+    }
+
+    return local_RetValue;
+}
+
