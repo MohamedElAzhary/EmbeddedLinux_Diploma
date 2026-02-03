@@ -31,6 +31,26 @@ uint8_t Util_IsDigit(uint8_t param_char)
     return local_RetValue;
 }
 
+uint8_t Util_IsLetter(uint8_t param_char)
+{
+    uint8_t local_RetValue = 0u;
+
+    if( ('a' <= param_char) && (param_char <= 'z') )
+    {
+        local_RetValue = 1u;
+    }
+    else if( ('A' <= param_char) && (param_char <= 'Z') )
+    {
+        local_RetValue = 1u;
+    }
+    else
+    {
+        // Do Nothing
+    }
+
+    return local_RetValue;
+}
+
 uint8_t Util_IsLowerCase(uint8_t param_char)
 {
     uint8_t local_RetValue = 0u;
@@ -50,9 +70,9 @@ uint8_t Util_IsUpperCase(uint8_t param_char)
     return local_RetValue;
 }
 
-uint8_t Util_ConvertToUpperCase(uint8_t param_char)
+int8_t Util_ConvertToUpperCase(int8_t param_char)
 {
-    uint8_t local_Char = param_char;
+    int8_t local_Char = param_char;
     if(Util_IsLowerCase(param_char))
     {
         local_Char = param_char - ('a' - 'A'); 
@@ -60,9 +80,9 @@ uint8_t Util_ConvertToUpperCase(uint8_t param_char)
     return local_Char;
 }
 
-uint8_t Util_ConvertToLowerCase(uint8_t param_char)
+int8_t Util_ConvertToLowerCase(int8_t param_char)
 {
-    uint8_t local_Char = param_char;
+    int8_t local_Char = param_char;
     if(Util_IsUpperCase(param_char))
     {
         local_Char = param_char + ('a' - 'A'); 
@@ -272,27 +292,34 @@ bool Util_CatStrings(uint8_t* param_Str1, uint8_t* param_Str2, bool param_AddSpa
 
     memset(global_ReveresedArray, 0u, UTIL_MAX_BUFFER_SIZE);
 
-    if(local_Str1Len + 1 <= UTIL_MAX_BUFFER_SIZE)
+    if( (param_Str1 != NULL) && (param_Str2 != NULL) )
     {
-        memcpy((uint8_t*) &global_ReveresedArray[local_DestIndex], (uint8_t*) param_Str1, local_Str1Len);  
-        local_DestIndex = local_DestIndex + local_Str1Len;
-
-        local_TotalLength = local_Str1Len;
-
-        if(true == param_AddSpaceSeperator)
+        if(local_Str1Len + 1 <= UTIL_MAX_BUFFER_SIZE)
         {
-            local_TotalLength = local_TotalLength + 1u;  
-            if(local_TotalLength <= UTIL_MAX_BUFFER_SIZE )
+            memcpy((uint8_t*) &global_ReveresedArray[local_DestIndex], (uint8_t*) param_Str1, local_Str1Len);  
+            local_DestIndex = local_DestIndex + local_Str1Len;
+
+            local_TotalLength = local_Str1Len;
+
+            if(true == param_AddSpaceSeperator)
             {
-                global_ReveresedArray[local_DestIndex] = ' ';
-                local_DestIndex = local_DestIndex + 1u;           
+                local_TotalLength = local_TotalLength + 1u;  
+                if(local_TotalLength <= UTIL_MAX_BUFFER_SIZE )
+                {
+                    global_ReveresedArray[local_DestIndex] = ' ';
+                    local_DestIndex = local_DestIndex + 1u;           
+                }
             }
-        }
 
-        local_TotalLength = local_TotalLength + local_Str2Len + 1;
-        if(local_TotalLength <= UTIL_MAX_BUFFER_SIZE)
-        {
-            memcpy((uint8_t*) &global_ReveresedArray[local_DestIndex], (uint8_t*) param_Str2, local_Str2Len);                
+            local_TotalLength = local_TotalLength + local_Str2Len + 1;
+            if(local_TotalLength <= UTIL_MAX_BUFFER_SIZE)
+            {
+                memcpy((uint8_t*) &global_ReveresedArray[local_DestIndex], (uint8_t*) param_Str2, local_Str2Len);                
+            }
+            else
+            {
+                local_RetValue = false;
+            }
         }
         else
         {
@@ -307,3 +334,50 @@ bool Util_CatStrings(uint8_t* param_Str1, uint8_t* param_Str2, bool param_AddSpa
     return local_RetValue;
 }
 
+bool Util_CompareStrings(int8_t* param_Str1, int8_t* param_Str2, bool param_IsCaseSensitive)
+{
+    bool local_RetValue = true;
+    uint32_t local_Index = 0u;
+    int32_t local_CmpValue = 0;
+    uint32_t local_Str1Len = 0u;
+    uint32_t local_Str2Len = 0u;
+
+    if( (param_Str1 != NULL) && (param_Str2 != NULL) )
+    {
+        local_Str1Len = strlen(param_Str1);
+        local_Str2Len = strlen(param_Str2);
+        if( (local_Str1Len == local_Str2Len) )
+        {
+            if(param_IsCaseSensitive == true)
+            {
+                local_CmpValue = strcmp(param_Str1, param_Str2);
+                if(local_CmpValue != 0)
+                {
+                    local_RetValue = false;
+                }
+            }
+            else
+            {
+                while(local_Index < local_Str1Len)
+                {
+                    if(Util_ConvertToLowerCase(param_Str1[local_Index]) != Util_ConvertToLowerCase(param_Str2[local_Index]) )
+                    {
+                        local_RetValue = false;
+                        break;
+                    }
+                    local_Index++;
+                }
+            }
+        }
+        else
+        {
+            local_RetValue = false;
+        }
+    }
+    else
+    {
+        local_RetValue = false;
+    }
+
+    return local_RetValue;
+}
