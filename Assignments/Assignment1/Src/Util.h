@@ -32,3 +32,4 @@ uint8_t* Util_GetReversedBufferAddress(void);
 bool Util_FillReversedStringTokensArray(uint8_t* param_StringPtr, int8_t param_Seperator);
 bool Util_CatStrings(uint8_t* param_Str1, uint8_t* param_Str2, bool param_AddSpaceSeperator);
 bool Util_CompareStrings(int8_t* param_Str1, int8_t* param_Str2, bool param_IsCaseSensitive);
+bool Util_IsValidString(const int8_t* param_StrPtr);

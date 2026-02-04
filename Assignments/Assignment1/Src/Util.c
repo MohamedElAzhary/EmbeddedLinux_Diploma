@@ -381,3 +381,15 @@ bool Util_CompareStrings(int8_t* param_Str1, int8_t* param_Str2, bool param_IsCa
 
     return local_RetValue;
 }
+
+bool Util_IsValidString(const int8_t* param_StrPtr)
+{
+    bool local_RetValue = true;
+
+    if( (param_StrPtr == NULL) || (param_StrPtr[0] == '\0') )
+    {
+        local_RetValue = false;
+    }
+    
+    return local_RetValue;
+}
