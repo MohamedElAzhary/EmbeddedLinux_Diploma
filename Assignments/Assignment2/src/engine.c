@@ -20,6 +20,7 @@
 #include "Util.h"
 #include "readline/readline.h"
 #include "readline/history.h"
+#include <errno.h>
 
 /**********Macros***********/
 #define SHELL_MAX_USER_INPUT_LEN_BYTES  (300U)
@@ -35,7 +36,7 @@ extern bool Shell_global_DeepInspectionEnabled;
 
 __pid_t Shell_global_PPID = 0;
 __pid_t Shell_global_CPID = 0;
-int8_t* Shell_global_BuiltInCmds[] = {"exit", "editshell"};
+int8_t* Shell_global_BuiltInCmds[] = {"exit", "editshell", "cd", "pwd"};
 
 // Address of Array of Strings
 int8_t** shell_global_CmdCache = NULL; 
@@ -46,6 +47,8 @@ int32_t Shell_Exec(int8_t** param_argv);
 bool Shell_IsBuiltInCmd(int8_t* param_line);
 bool Shell_ExecBuiltInCmd(int8_t* param_line);
 bool Shell_InitCMDCache(void);
+static bool Shell_BuiltInCD(const char* p_newPATH);
+static bool Shell_BuiltInPWD(void);
 int32_t Shell_CmpStrings(const void *param_Str1Ptr, const void *param_Str2Ptr);
 int8_t* Shell_GetCMD(const int8_t* param_Str, int32_t state);
 int8_t** Shell_Completion(const char *text, int start, int end);
@@ -242,6 +245,22 @@ bool Shell_ExecBuiltInCmd(int8_t* param_line)
             printf("Built-In editshell CMD Executed\n");
         }
     }
+    else if(0 == strncmp("cd", param_line, 2 ) )
+    {       
+        local_RetValue = Shell_BuiltInCD(&param_line[3]);
+        if(Shell_global_DebugEnabled)
+        {
+            printf("Built-In cd CMD Executed\n");
+        }
+    }
+    else if(0 == strncmp("pwd", param_line, strlen(param_line)) )
+    {        
+        local_RetValue = Shell_BuiltInPWD();
+        if(Shell_global_DebugEnabled)
+        {
+            printf("Built-In cd CMD Executed\n");
+        }
+    }
     else
     {
 
@@ -428,4 +447,46 @@ int8_t** Shell_Completion(const char *text, int start, int end)
         local_PossibleCMDsArray = (int8_t**) rl_completion_matches(text, (rl_compentry_func_t *) Shell_GetCMD);
     }
     return local_PossibleCMDsArray;
+}
+
+static bool Shell_BuiltInCD(const char* p_newPATH)
+{
+    bool local_RetValue = true;
+
+    if(NULL != p_newPATH)
+    {
+        if( 0 == chdir(p_newPATH) )
+        {
+            printf("Directory changed successfully to %s\n", p_newPATH);
+        }
+        else
+        {
+            perror("Error in Changing Directory");  
+            local_RetValue = false;          
+        }
+    }
+    else
+    {
+        local_RetValue = false;
+    }
+
+    return local_RetValue;
+}
+
+static bool Shell_BuiltInPWD(void)
+{
+    bool local_RetValue = true;
+    char local_PATH[1024] = {0};
+
+    if( 0 != getcwd(local_PATH, sizeof(local_PATH) ) )
+    {
+        printf("%s\n", local_PATH);
+    }
+    else
+    {
+        perror("Error in PWD");  
+        local_RetValue = false;          
+    }
+
+    return local_RetValue;
 }
